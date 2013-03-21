@@ -4,5 +4,9 @@
     <string name="app_name">DatosGrillaServidor</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-
+    <string name="strID">Identificacion</string>
+    <string name="strName">Nombre</string>
+    <string name="strLastName">Apellido</string>
+    <string name="strTitle">Informacion Estudiantes</string>
+	<string name="strBoton">Obtener Informacion</string>
 </resources>
