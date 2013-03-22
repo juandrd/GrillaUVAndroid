@@ -9,12 +9,19 @@ import org.apache.http.StatusLine;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-import android.os.Bundle;
 import android.app.Activity;
-import android.view.Menu;
-import android.widget.TextView;
 import android.os.AsyncTask;
+import android.os.Bundle;
+import android.view.Menu;
+import android.view.View;
+import android.view.ViewGroup.LayoutParams;
+import android.widget.TableLayout;
+import android.widget.TableRow;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -31,13 +38,19 @@ public class MainActivity extends Activity {
 		return true;
 	}
 	
+	public void obtenerDatos(View v)
+	{		
+		new backgroundService().execute();
+	}
 	
 		private class backgroundService extends AsyncTask<Void, Void, String>
 	{
 
+		JSONArray arrayInformacion;
 		@Override
 		protected String doInBackground(Void... arg0) {
 			String informacion="";
+			
 			
 			try
 			{
@@ -49,8 +62,9 @@ public class MainActivity extends Activity {
 					ByteArrayOutputStream out = new ByteArrayOutputStream();
 					response.getEntity().writeTo(out);
 					out.close();
-					informacion = out.toString();
 					
+					informacion = out.toString();
+					arrayInformacion = new JSONArray(informacion);
 				}
 				else
 				{
@@ -63,28 +77,75 @@ public class MainActivity extends Activity {
 			{
 				informacion = "¡Error! "+e.getMessage();
 			}
+			try {
+				informacion=arrayInformacion.getString(0);
+			} catch (JSONException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			return informacion;
 		}
 		
 		@Override
 		protected void onPostExecute(String result)
 		{
-			TextView tv=  (TextView)findViewById(R.id.textView1);
-			tv.setText(result);
+			TableLayout tl= (TableLayout)findViewById(R.id.tableLayout1);
+		
+
+			
+			for(int i=0;i<arrayInformacion.length();i++)
+			{
+				
+			try {
+				TableRow tr = new TableRow(MainActivity.this);
+
+				
+		        JSONObject objeto=arrayInformacion.getJSONObject(i);
+				
+				TextView tv_id=new TextView(MainActivity.this);
+				tv_id.setText(objeto.get("id").toString());
+
+				
+				TextView tv_name=new TextView(MainActivity.this);
+				tv_name.setText(objeto.get("name").toString());
+
+				
+				TextView tv_lastname=new TextView(MainActivity.this);
+				tv_lastname.setText(objeto.get("lastname").toString());
+
+				
+				tr.addView(tv_id);
+				tr.addView(tv_name);
+				tr.addView(tv_lastname);
+			
+				
+			    tl.addView(tr,new TableLayout.LayoutParams(
+			                LayoutParams.FILL_PARENT,
+			                LayoutParams.WRAP_CONTENT));
+				
+
+		
+
+				
+			} catch (JSONException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+
+			}
+			
 		}
 		
 		@Override
 		protected void onPreExecute()
 		{
-			TextView tv=  (TextView)findViewById(R.id.textView1);
-			tv.setText("...");
+
 		}
 		
 		@Override
 		protected void onProgressUpdate(Void... values)
 		{
-			TextView tv=  (TextView)findViewById(R.id.textView1);
-    		tv.setText("...");
+
 		}
 	}
 
