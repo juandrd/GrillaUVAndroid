@@ -133,6 +133,8 @@ public class MainActivity extends Activity {
 			}
 
 			}
+			View b = findViewById(R.id.button1);
+			b.setVisibility(View.INVISIBLE);
 			
 		}
 		
